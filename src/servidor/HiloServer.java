@@ -94,4 +94,9 @@ public class HiloServer extends Thread {
         }
     }
 
+    public void setFinalizar(boolean finalizar) {
+        this.finalizar = finalizar;
+    }
+    
+
 }

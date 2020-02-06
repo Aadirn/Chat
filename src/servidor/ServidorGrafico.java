@@ -22,9 +22,8 @@ public class ServidorGrafico extends javax.swing.JFrame {
 
     public static ServerSocket escuchador;
     public static Socket conexion;
-    private static HiloServerChat hilo;
     private static boolean finalizar = false;
-    private String puerto;
+    private HiloServer hilo;
 
     public static ArrayList<HiloServerChat> usuarios = new ArrayList<HiloServerChat>();
 
@@ -149,7 +148,8 @@ public class ServidorGrafico extends javax.swing.JFrame {
     private void conectar() {
         if (!txtPuerto.getText().isEmpty()) {
             String puerto = txtPuerto.getText();
-            HiloServer hilo = new HiloServer(puerto);
+            hilo = new HiloServer(puerto);
+            
             hilo.start();
         } else {
             JOptionPane.showMessageDialog(null, "Puerto vacio, escriba un puerto valido", "Aviso", JOptionPane.ERROR_MESSAGE);
@@ -160,7 +160,9 @@ public class ServidorGrafico extends javax.swing.JFrame {
     }
 
     private void desconectar() {
+        finalizar=true;
         try {
+            hilo.setFinalizar(finalizar);
             conexion.close();
             escuchador.close();
         } catch (IOException ex) {

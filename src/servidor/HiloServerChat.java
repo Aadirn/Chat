@@ -42,6 +42,8 @@ public class HiloServerChat extends Thread {
                 salida = new PrintWriter(conexion.getOutputStream());
 
                 System.out.println("Antes de entrar al metodo captar mensaje");
+                salida.print("Este es el servidor de raZA PURA ESPAÑOLA\r\n");
+                salida.flush();
 
                 captarMensaje();
             } catch (IOException ex) {
