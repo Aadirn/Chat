@@ -12,8 +12,6 @@ import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JTextField;
-import static servidor.ServidorGrafico.conexion;
-import static servidor.ServidorGrafico.escuchador;
 import static servidor.ServidorGrafico.usuarios;
 
 /**
@@ -28,8 +26,11 @@ public class HiloServer extends Thread {
     private static boolean finalizar = false;
     private String puerto;
 
-    HiloServer(JTextField txtPuerto) {
+    public HiloServer(String puerto) {
+        this.puerto = puerto;
+    }
 
+    public HiloServer() {
     }
 
     @Override
@@ -42,9 +43,8 @@ public class HiloServer extends Thread {
         int puertoI;
 
         //puerto = txtPuerto.getText();
-
         if (puerto.isEmpty()) {
-            System.out.println("MIERDA");
+            System.out.println("Puerto vacio");
         } else {
             puertoI = Integer.valueOf(puerto);
             try {
@@ -67,7 +67,6 @@ public class HiloServer extends Thread {
                             hilo = new HiloServerChat(conexion, new CommsListener() {
                                 @Override
                                 public void llegoMsg(String msg) {
-                                    String e;
                                     PrintWriter s;
                                     //System.out.println("Ostia, me han dicho:" + msg);
                                     for (int i = 0; i < usuarios.size(); i++) {

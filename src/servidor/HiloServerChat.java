@@ -17,7 +17,7 @@ import java.util.Scanner;
  */
 public class HiloServerChat extends Thread {
 
-    private ServerSocket escuchador;
+    
     private Socket conexion;
     private Scanner entrada;
     private PrintWriter salida;
@@ -68,8 +68,8 @@ public class HiloServerChat extends Thread {
         mensajeCompleto = entrada.nextLine();
         System.out.println(mensajeCompleto);
 
-        //Tendria que llegarme algo tipo = Accion#Nickname#mensaje()si hay mensaje
-        //Siendo accion conectar, salir o el mensaje
+        //Tendria que llegarme algo tipo = Accion#Nickname#mensaje (si hay mensaje)
+        //Siendo accion: conectar, salir o el mensaje
         trozo = mensajeCompleto.split("#");
         accion = trozo[0];
         switch (accion) {

@@ -12,6 +12,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -92,9 +93,10 @@ public class ServidorGrafico extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnConectarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConectarActionPerformed
-        conectar();
         btnConectar.setEnabled(false);
         btnDesconectar.setEnabled(true);
+        conectar();
+
     }//GEN-LAST:event_btnConectarActionPerformed
 
     private void btnDesconectarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDesconectarActionPerformed
@@ -145,9 +147,16 @@ public class ServidorGrafico extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
 
     private void conectar() {
-        
-        HiloServer hilo = new HiloServer(txtPuerto);
-        
+        if (!txtPuerto.getText().isEmpty()) {
+            String puerto = txtPuerto.getText();
+            HiloServer hilo = new HiloServer(puerto);
+            hilo.start();
+        } else {
+            JOptionPane.showMessageDialog(null, "Puerto vacio, escriba un puerto valido", "Aviso", JOptionPane.ERROR_MESSAGE);
+            btnConectar.setEnabled(true);
+            btnDesconectar.setEnabled(false);
+        }
+
     }
 
     private void desconectar() {
