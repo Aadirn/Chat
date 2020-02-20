@@ -11,7 +11,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JTextField;
 import static servidor.ServidorGrafico.usuarios;
 
 /**
@@ -44,7 +43,7 @@ public class HiloServer extends Thread {
 
         //puerto = txtPuerto.getText();
         if (puerto.isEmpty()) {
-            System.out.println("Puerto vacio");
+            //System.out.println("Puerto vacio");
         } else {
             puertoI = Integer.valueOf(puerto);
             try {
@@ -56,23 +55,28 @@ public class HiloServer extends Thread {
 
                     if (!escuchador.isClosed()) {
 
-                        System.out.println("Escuchador no esta cerrado");
+                        //System.out.println("Escuchador no esta cerrado");
 
                         conexion = escuchador.accept();
 
                         if (conexion.isConnected()) {
 
-                            System.out.println("conexion está conectada");
+                            //System.out.println("conexion está conectada");
 
-                            hilo = new HiloServerChat(conexion, new CommsListener() {
+                            hilo = new HiloServerChat(conexion, new CommsListenerServer() {
                                 @Override
                                 public void llegoMsg(String msg) {
                                     PrintWriter s;
                                     //System.out.println("Ostia, me han dicho:" + msg);
                                     for (int i = 0; i < usuarios.size(); i++) {
-                                        s = usuarios.get(i).getSalida();
-                                        s.print(msg);
-                                        s.flush();
+                                        if (finalizar == true) {
+                                            usuarios.get(i).getEntrada().close();
+                                            usuarios.get(i).getSalida().close();
+                                        } else {
+                                            s = usuarios.get(i).getSalida();
+                                            s.print(msg);
+                                            s.flush();
+                                        }
 
                                     }
                                 }
@@ -81,22 +85,27 @@ public class HiloServer extends Thread {
                             hilo.start();
 
                         } else {
-                            System.err.println("No se ha podido conectar");
+                            //System.err.println("No se ha podido conectar");
                         }
                     } else {
-                        System.err.println("Escuchador Cerrado");
+                        //System.err.println("Escuchador Cerrado");
                     }
-                } while (!finalizar);
+                } while (true);
 
             } catch (IOException ex) {
-                Logger.getLogger(ServidorGrafico.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
 
-    public void setFinalizar(boolean finalizar) {
-        this.finalizar = finalizar;
+    public void setFinalizar() {
+        try {
+            //System.out.println("Salgo del bucle");
+            //conexion.close();
+            escuchador.close();
+
+        } catch (IOException ex) {
+            Logger.getLogger(HiloServer.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
-    
 
 }

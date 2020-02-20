@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
@@ -23,18 +24,18 @@ public class Cliente extends javax.swing.JFrame {
     private Scanner entrada;
     private PrintWriter salida;
     private String nickname;
-    private HiloClienteChatBienvenida hiloBienvenida;
-    private HiloClienteChatSalida hiloSalida;
-    private HiloClienteChatMensaje hiloMensaje;
+    private HiloClienteConectar hilo;
+    private ArrayList<String> nicks = new ArrayList<>();
 
     public Cliente() {
         initComponents();
         txtAreaChat.setEditable(false);
         txtAreaChat.setEnabled(false);
-        txtAreaChat.setText("Bienvenidos al chat de ESPAÑA\n");
+        txtAreaChat.setText("Bienvenidos al chat de Adrian\n");
         txtMensaje.setEnabled(false);
         btnEnviar.setEnabled(false);
         btnSalir.setEnabled(false);
+        conectarse();
 
     }
 
@@ -129,16 +130,19 @@ public class Cliente extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnEntrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEntrarActionPerformed
-        hiloBienvenida=new HiloClienteChatBienvenida(PUERTO);
-        hiloBienvenida.start();
-        nickname=txtNickname.getText();
-        entrada=hiloBienvenida.getEntrada();
-        salida=hiloBienvenida.getSalida();
-        conectado();
+
+        if (!txtNickname.getText().isEmpty()) {
+            nickname = txtNickname.getText();
+            nicks.add(nickname);
+            conectado();
+        } else {
+            System.err.println("Nickname vacio");
+        }
     }//GEN-LAST:event_btnEntrarActionPerformed
 
     private void btnSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalirActionPerformed
         salir();
+
     }//GEN-LAST:event_btnSalirActionPerformed
 
     private void btnEnviarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEnviarActionPerformed
@@ -146,7 +150,13 @@ public class Cliente extends javax.swing.JFrame {
     }//GEN-LAST:event_btnEnviarActionPerformed
 
     private void txtNicknameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNicknameActionPerformed
-        System.out.println("Aun no");
+        if (!txtNickname.getText().isEmpty()) {
+            nickname = txtNickname.getText();
+            nicks.add(nickname);
+            conectado();
+        } else {
+            System.err.println("Nickname vacio");
+        }
     }//GEN-LAST:event_txtNicknameActionPerformed
 
     /**
@@ -195,28 +205,36 @@ public class Cliente extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
 
     private void conectado() {
+        if (conexion.isConnected()) {
 
-        salida.print("conectar#" + nickname + "\r\n");
-        salida.flush();
+            txtNickname.setEnabled(false);
+            btnEntrar.setEnabled(false);
+            btnSalir.setEnabled(true);
+            btnEnviar.setEnabled(true);
+            txtAreaChat.setEnabled(true);
+            txtMensaje.setEnabled(true);
+            txtMensaje.setEnabled(true);
 
-        String msg;
+            salida.print("conectar#" + nickname + "\r\n");
+            salida.flush();
 
-        msg = entrada.nextLine();
-        System.out.println(msg);
-
-        txtAreaChat.append(msg + "\n");
+        }
+        // msg = entrada.nextLine();
+        //System.out.println(msg);
+        //Esto lo hago en el hilo
     }
 
     private void salir() {
         salida.print("salir#" + nickname + "\r\n");
         salida.flush();
+        txtNickname.setEnabled(true);
+        btnEntrar.setEnabled(true);
+        btnSalir.setEnabled(false);
+        btnEnviar.setEnabled(false);
+        txtAreaChat.setEnabled(false);
+        txtMensaje.setEnabled(false);
+        txtMensaje.setEnabled(false);
 
-        String msg;
-
-        msg = entrada.nextLine();
-        System.out.println(msg);
-
-        txtAreaChat.append(msg + "\n");
     }
 
     private void envioMensaje() {
@@ -225,26 +243,17 @@ public class Cliente extends javax.swing.JFrame {
             String msgC = txtMensaje.getText();
             salida.print("mensaje#" + nickname + "#" + msgC + "\r\n");
             salida.flush();
+
+            txtMensaje.setText("");
         } else {
             System.err.println("Mensaje vacio");
         }
-        String msg;
-
-        msg = entrada.nextLine();
-        System.out.println(msg);
-
-        txtAreaChat.append(msg + "\n");
     }
 
-    /*private void conectarse() {
+    private void conectarse() {
         try {
             try {
-                escuchador = new ServerSocket(PUERTO);
-                if (escuchador.isClosed()) {
-                    System.err.println("Escuchador cerrado");
-                    return;
-                }
-                conexion = escuchador.accept();
+                conexion = new Socket("localhost", PUERTO);
                 if (!conexion.isConnected()) {
                     System.err.println("conexion cerrada");
                     return;
@@ -256,22 +265,12 @@ public class Cliente extends javax.swing.JFrame {
             entrada = new Scanner(conexion.getInputStream());
             salida = new PrintWriter(conexion.getOutputStream());
 
-            if (!txtNickname.getText().isEmpty()) {
-                nickname = txtNickname.getText();
-                conectado();
-            } else {
-                System.err.println("Nickname vacio");
-            }
+            hilo = HiloClienteConectar.init(entrada, txtAreaChat, nicks);
+            hilo.start();
+
         } catch (IOException ex) {
             System.err.println("Fallo al obtener los puntos de E/S");
         }
 
-        txtNickname.setEnabled(false);
-        btnEntrar.setEnabled(false);
-        btnSalir.setEnabled(true);
-        btnEnviar.setEnabled(true);
-        txtAreaChat.setEnabled(true);
-        txtMensaje.setEnabled(true);
-
-    }*/
+    }
 }

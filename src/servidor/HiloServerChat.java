@@ -7,7 +7,6 @@ package servidor;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Scanner;
 
@@ -27,9 +26,9 @@ public class HiloServerChat extends Thread {
     private String mensajeSalida;
     private String mensajeEnvio;
     private boolean salir = true;
-    private CommsListener listener;
+    private CommsListenerServer listener;
 
-    public HiloServerChat(Socket conexion, CommsListener commsListener) {
+    public HiloServerChat(Socket conexion, CommsListenerServer commsListener) {
         this.listener = commsListener;
         this.conexion = conexion;
     }
@@ -41,8 +40,7 @@ public class HiloServerChat extends Thread {
                 entrada = new Scanner(conexion.getInputStream());
                 salida = new PrintWriter(conexion.getOutputStream());
 
-                System.out.println("Antes de entrar al metodo captar mensaje");
-                salida.print("Este es el servidor de raZA PURA ESPAÑOLA\r\n");
+                //System.out.println("Antes de entrar al metodo captar mensaje");
                 salida.flush();
 
                 captarMensaje();
@@ -51,7 +49,7 @@ public class HiloServerChat extends Thread {
             }
 
         } while (salir);
-        System.out.println("Cierro cositas");
+        //System.out.println("Cierro cositas");
         entrada.close();
         salida.close();
         try {
@@ -63,12 +61,13 @@ public class HiloServerChat extends Thread {
 
     private void captarMensaje() {
 
-        System.out.println("Entro en captar mensaje");
+        //System.out.println("Entro en captar mensaje");
         String[] trozo = new String[2];
         String accion;
-        System.out.println("antes de nexline");
+        //System.out.println("antes de nexline");
+        if(conexion.isConnected()){
         mensajeCompleto = entrada.nextLine();
-        System.out.println(mensajeCompleto);
+        //System.out.println(mensajeCompleto);
 
         //Tendria que llegarme algo tipo = Accion#Nickname#mensaje (si hay mensaje)
         //Siendo accion: conectar, salir o el mensaje
@@ -86,6 +85,9 @@ public class HiloServerChat extends Thread {
                 break;
             default:
                 break;
+        }
+        }else{
+            
         }
     }
 

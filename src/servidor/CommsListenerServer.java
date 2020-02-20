@@ -3,12 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package cliente;
+package servidor;
 
 /**
  *
  * @author Castealo
  */
-public class HiloClienteChatSalida  extends Thread{
+public interface CommsListenerServer {
+    
+    void llegoMsg(String msg);
     
 }

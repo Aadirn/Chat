@@ -5,13 +5,9 @@
  */
 package servidor;
 
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
@@ -149,7 +145,7 @@ public class ServidorGrafico extends javax.swing.JFrame {
         if (!txtPuerto.getText().isEmpty()) {
             String puerto = txtPuerto.getText();
             hilo = new HiloServer(puerto);
-            
+
             hilo.start();
         } else {
             JOptionPane.showMessageDialog(null, "Puerto vacio, escriba un puerto valido", "Aviso", JOptionPane.ERROR_MESSAGE);
@@ -160,13 +156,7 @@ public class ServidorGrafico extends javax.swing.JFrame {
     }
 
     private void desconectar() {
-        finalizar=true;
-        try {
-            hilo.setFinalizar(finalizar);
-            conexion.close();
-            escuchador.close();
-        } catch (IOException ex) {
-            Logger.getLogger(ServidorGrafico.class.getName()).log(Level.SEVERE, null, ex);
-        }
+            hilo.setFinalizar();
+
     }
 }
