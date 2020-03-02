@@ -12,5 +12,7 @@ package servidor;
 public interface CommsListenerServer {
     
     void llegoMsg(String msg);
+
+    void salidaMsg(String mensajeSalida, HiloServerChat hilo);
     
 }

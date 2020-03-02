@@ -48,7 +48,6 @@ public class HiloClienteConectar extends Thread {
                 String algo = entrada.nextLine();
                 txtArea.append("\n" + algo);
             } catch (NoSuchElementException ex) {
-
             }
 
         } while (!finalizar);

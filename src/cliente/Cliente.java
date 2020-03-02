@@ -11,6 +11,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -141,7 +143,11 @@ public class Cliente extends javax.swing.JFrame {
     }//GEN-LAST:event_btnEntrarActionPerformed
 
     private void btnSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalirActionPerformed
-        salir();
+        try {
+            salir();
+        } catch (IOException ex) {
+            Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
     }//GEN-LAST:event_btnSalirActionPerformed
 
@@ -205,7 +211,7 @@ public class Cliente extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
 
     private void conectado() {
-        if (conexion.isConnected()) {
+        if (conexion!=null) {
 
             txtNickname.setEnabled(false);
             btnEntrar.setEnabled(false);
@@ -218,15 +224,20 @@ public class Cliente extends javax.swing.JFrame {
             salida.print("conectar#" + nickname + "\r\n");
             salida.flush();
 
+        }else{
+            conectarse();
         }
         // msg = entrada.nextLine();
         //System.out.println(msg);
         //Esto lo hago en el hilo
     }
 
-    private void salir() {
+    private void salir() throws IOException {
         salida.print("salir#" + nickname + "\r\n");
         salida.flush();
+        conexion.close();
+        salida.close();
+        entrada.close();
         txtNickname.setEnabled(true);
         btnEntrar.setEnabled(true);
         btnSalir.setEnabled(false);

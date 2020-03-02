@@ -16,7 +16,6 @@ import java.util.Scanner;
  */
 public class HiloServerChat extends Thread {
 
-    
     private Socket conexion;
     private Scanner entrada;
     private PrintWriter salida;
@@ -65,29 +64,29 @@ public class HiloServerChat extends Thread {
         String[] trozo = new String[2];
         String accion;
         //System.out.println("antes de nexline");
-        if(conexion.isConnected()){
-        mensajeCompleto = entrada.nextLine();
-        //System.out.println(mensajeCompleto);
+        if (conexion.isConnected()) {
+            mensajeCompleto = entrada.nextLine();
+            //System.out.println(mensajeCompleto);
 
-        //Tendria que llegarme algo tipo = Accion#Nickname#mensaje (si hay mensaje)
-        //Siendo accion: conectar, salir o el mensaje
-        trozo = mensajeCompleto.split("#");
-        accion = trozo[0];
-        switch (accion) {
-            case "conectar":
-                conectar(trozo[1]);
-                break;
-            case "salir":
-                salir(trozo[1]);
-                break;
-            case "mensaje":
-                mensaje(trozo[1], trozo[2]);
-                break;
-            default:
-                break;
-        }
-        }else{
-            
+            //Tendria que llegarme algo tipo = Accion#Nickname#mensaje (si hay mensaje)
+            //Siendo accion: conectar, salir o el mensaje
+            trozo = mensajeCompleto.split("#");
+            accion = trozo[0];
+            switch (accion) {
+                case "conectar":
+                    conectar(trozo[1]);
+                    break;
+                case "salir":
+                    salir(trozo[1]);
+                    break;
+                case "mensaje":
+                    mensaje(trozo[1], trozo[2]);
+                    break;
+                default:
+                    break;
+            }
+        } else {
+
         }
     }
 
@@ -107,8 +106,9 @@ public class HiloServerChat extends Thread {
         nickName = nick;
         mensajeSalida = "El usuario " + nick + " acaba de salir. Bye bye.\r\n";
         if (listener != null) {
-            listener.llegoMsg(mensajeSalida);
+            listener.salidaMsg(mensajeSalida, this);
         }
+
         salir = false;
     }
 

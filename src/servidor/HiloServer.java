@@ -56,13 +56,11 @@ public class HiloServer extends Thread {
                     if (!escuchador.isClosed()) {
 
                         //System.out.println("Escuchador no esta cerrado");
-
                         conexion = escuchador.accept();
 
                         if (conexion.isConnected()) {
 
                             //System.out.println("conexion está conectada");
-
                             hilo = new HiloServerChat(conexion, new CommsListenerServer() {
                                 @Override
                                 public void llegoMsg(String msg) {
@@ -80,6 +78,21 @@ public class HiloServer extends Thread {
 
                                     }
                                 }
+
+                                @Override
+                                public void salidaMsg(String msg, HiloServerChat hilo) {
+                                    PrintWriter s;
+                                    //System.out.println("Ostia, me han dicho:" + msg);
+                                    for (int i = 0; i < usuarios.size(); i++) {
+                                        s = usuarios.get(i).getSalida();
+                                        s.print(msg);
+                                        s.flush();
+                                    }
+
+                                    usuarios.remove(hilo);
+
+                                }
+
                             });
                             usuarios.add(hilo);
                             hilo.start();
